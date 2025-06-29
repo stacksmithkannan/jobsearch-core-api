@@ -119,7 +119,7 @@ Open a Pull Request
 
 ### 📄 License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the [![License: MIT](https://github.com/stacksmithkannan/jobsearch-core-api/blob/main/LICENSE.txt)](LICENSE)
 
 
 ### 👨‍💻 Author
