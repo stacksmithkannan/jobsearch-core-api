@@ -32,6 +32,7 @@ A scalable job portal backend built with **.NET Core**, following **Clean Archit
 ---
 
 ## 🧩 Project Structue
+
 JobFinder.API/
 ├── Application/ # CQRS Handlers, Commands, Queries
 ├── Domain/ # Entity models
@@ -44,25 +45,31 @@ JobFinder.API/
 ## 🔧 Setup Instructions
 
 ### 1. Clone the Repository
+
  git clone https://github.com/your-username/jobfinder-api.git
  cd jobfinder-api
 
 ### **2. Configure Database Connection**
+
 Edit appsettings.json:
+
 "ConnectionStrings": {
  "DefaultConnection": "Server=localhost\\SQLEXPRESS;Database=JobFinderDB;Trusted_Connection=True;"
 }
 ### **3. Apply Migrations**
+
 dotnet ef migrations add InitialCreate
 dotnet ef database update
 
 ### **4. Run the API**
+
 dotnet run
 
 Swagger will be available at:
  https://localhost:<port>/swagger
 
 ### 📖 CQRS Pattern in Action
+
 ➕ Command Example
 
 CreateJobCommand.cs
