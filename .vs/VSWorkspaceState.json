@@ -1,0 +1,12 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\Data",
+    "\\Domain",
+    "\\Domain\\Entities",
+    "\\Infrastructure",
+    "\\Mappings"
+  ],
+  "SelectedNode": "\\JobFinder.API.sln",
+  "PreviewInSolutionExplorer": false
+}
