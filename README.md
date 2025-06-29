@@ -47,6 +47,7 @@ JobFinder.API/
 ### 1. Clone the Repository
 
  git clone https://github.com/your-username/jobfinder-api.git
+ 
  cd jobfinder-api
 
 ### **2. Configure Database Connection**
@@ -59,6 +60,7 @@ Edit appsettings.json:
 ### **3. Apply Migrations**
 
 dotnet ef migrations add InitialCreate
+
 dotnet ef database update
 
 ### **4. Run the API**
@@ -66,6 +68,7 @@ dotnet ef database update
 dotnet run
 
 Swagger will be available at:
+
  https://localhost:<port>/swagger
 
 ### 📖 CQRS Pattern in Action
