@@ -39,5 +39,40 @@ namespace JobFinder.API.Controllers
             return Ok(job);
         }
 
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateJob(int id, [FromBody] UpdateJobCommand command)
+        {
+            if (id != command.Id)
+                return BadRequest("ID in URL and body do not match");
+
+            var result = await _mediator.Send(command);
+            if (!result)
+                return NotFound($"Job with ID {id} not found.");
+
+            return NoContent();
+        }
+
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> PatchJob(int id, [FromBody]  PatchJobCommand command)
+        {
+            if (id != command.Id)
+                return BadRequest("ID in URL and body do not match");
+
+            var result =await _mediator.Send(command);
+            if (!result)
+
+                return NotFound($"Job with ID {id} not found.");
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteJob(int id)
+        {
+            var result = await _mediator.Send(new DeleteJobCommand(id));
+            if (!result)
+                return NotFound($"Job with ID {id} not found.");
+
+            return NoContent();
+        }
     }
 }
