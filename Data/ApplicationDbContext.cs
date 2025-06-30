@@ -16,7 +16,7 @@ namespace JobFinder.API.Data
                 .Property(j => j.Skills)
                 .HasConversion(
                 v => string.Join(",", v),
-                v => v.Split(",", StringSplitOptions.RemoveEmptyEntries)
+                v => v.Split(",", StringSplitOptions.None).ToList()
                 );
         }
 

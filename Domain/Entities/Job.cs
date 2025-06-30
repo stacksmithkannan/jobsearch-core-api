@@ -8,7 +8,7 @@ namespace JobFinder.API.Domain.Entities
         public string Description { get; set; }
         public string Location { get; set; }
         public string Company { get; set; }
-        public string[] Skills { get; set; }
+        public List<string> Skills { get; set; }
         public DateTime PostedDate { get; set; } = DateTime.UtcNow;
     }
 }
