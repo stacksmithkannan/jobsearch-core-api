@@ -30,5 +30,14 @@ namespace JobFinder.API.Controllers
             return Ok(jobs);
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetJobById(int id)
+        {
+            var job = await _mediator.Send(new GetJobByIdQuery(id));
+            if(job == null)
+                return NotFound($"Job with ID {id} not found.");
+            return Ok(job);
+        }
+
     }
 }
