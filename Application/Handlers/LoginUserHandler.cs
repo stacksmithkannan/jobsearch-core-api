@@ -28,6 +28,24 @@ namespace JobFinder.API.Application.Handlers
             if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
                 return "Invalid email or password";
 
+
+            //Validate JWT Configuration
+            var jwtKey = _config["Jwt:Key"];
+            var jwtIssuer = _config["Jwt:Issuer"];
+            var jwtAudience = _config["Jwt:Audience"];
+            var jwtDuration = _config["Jwt:DurationInMinutes"];
+
+            if (string.IsNullOrEmpty(jwtKey) ||
+                string.IsNullOrEmpty(jwtIssuer) ||
+                string.IsNullOrEmpty(jwtAudience) ||
+                string.IsNullOrEmpty(jwtDuration))
+                {
+                    throw new InvalidOperationException("One or more JWT configurations are missing in appsettings.json.");
+                }
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
             //JWT token generation
             var authClaims = new List<Claim>()
             {
@@ -36,15 +54,13 @@ namespace JobFinder.API.Application.Handlers
                 new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString())
             };
 
-            var jwtKey = _config["Jwt:Key"];
-            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
 
             var token = new JwtSecurityToken(
-                issuer: _config["Jwt:Issuer"],
-                audience: _config["Jwt:Audiance"],
-                expires: DateTime.UtcNow.AddMinutes(Convert.ToDouble(_config["Jwt:DurationInMinutes"])),
+                issuer: jwtIssuer,
+                audience: jwtAudience,
                 claims: authClaims,
-                signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
+                expires: DateTime.UtcNow.AddMinutes(Convert.ToDouble(jwtDuration)),
+                signingCredentials: creds
                 );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
