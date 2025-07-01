@@ -2,11 +2,13 @@
 using JobFinder.API.Application.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace JobFinder.API.Controllers
 {
     [ApiController]
     [Route("api/[Controller]")]
+    [Authorize]
     public class JobsController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -17,6 +19,7 @@ namespace JobFinder.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> CreateJob([FromBody] CreateJobCommand command)
         {
             var JobId = await _mediator.Send(command);
@@ -24,6 +27,7 @@ namespace JobFinder.API.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAllJobs()
         {
             var jobs = await _mediator.Send(new GetAllJobsQuery());
@@ -31,6 +35,7 @@ namespace JobFinder.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetJobById(int id)
         {
             var job = await _mediator.Send(new GetJobByIdQuery(id));
@@ -40,6 +45,7 @@ namespace JobFinder.API.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> UpdateJob(int id, [FromBody] UpdateJobCommand command)
         {
             if (id != command.Id)
@@ -53,6 +59,7 @@ namespace JobFinder.API.Controllers
         }
 
         [HttpPatch("{id}")]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> PatchJob(int id, [FromBody]  PatchJobCommand command)
         {
             if (id != command.Id)
@@ -66,6 +73,7 @@ namespace JobFinder.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> DeleteJob(int id)
         {
             var result = await _mediator.Send(new DeleteJobCommand(id));
