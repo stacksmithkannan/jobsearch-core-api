@@ -8,10 +8,12 @@ namespace JobFinder.API.Application.Handlers
     public class CreateJobHandler : IRequestHandler<CreateJobCommand, int>
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<CreateJobHandler> _logger;
 
-        public CreateJobHandler(ApplicationDbContext context)
+        public CreateJobHandler(ApplicationDbContext context, ILogger<CreateJobHandler> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public async Task<int> Handle(CreateJobCommand request, CancellationToken cancellationToken)
@@ -27,6 +29,7 @@ namespace JobFinder.API.Application.Handlers
             };
             _context.Jobs.Add(Job);
             await _context.SaveChangesAsync(cancellationToken);
+            _logger.LogInformation("Job created with ID: {JobId}", Job.Id);
             return Job.Id;
         }
     }
