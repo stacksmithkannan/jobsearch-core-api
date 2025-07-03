@@ -15,8 +15,21 @@ using JobFinder.API.Domain.Entities;
 using BCrypt.Net;
 using JobFinder.API.StartUp;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
+using Serilog;
+using Serilog.Sinks.SystemConsole.Themes;
+
+//Logging
+
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .WriteTo.Console(
+        outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}",
+        theme: SystemConsoleTheme.Colored)
+    .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
+Log.Information("Starting up the JobFinder API...");
 
 //Load JWT config
 var jwtConfig = builder.Configuration.GetSection("Jwt");
@@ -105,7 +118,7 @@ builder.Services.Configure<AdminUserOptions>(
 
 var app = builder.Build();
 
-// Migrate DB and Seed Admin
+// Migrate DB and Seed AdminFV
 await SeedAdminUser.EnsureAdminCreatedAsync(app.Services);
 
 // Configure the HTTP request pipeline.
