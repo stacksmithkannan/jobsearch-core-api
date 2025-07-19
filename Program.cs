@@ -66,6 +66,9 @@ builder.Services.AddSwaggerGen(c =>
         },
         new string[] {}
      }});
+
+    // Enable file upload support
+    c.OperationFilter<FileUploadOperationFilter>();
 });
 
 // DB Context
@@ -115,6 +118,9 @@ builder.Services.AddAuthorization(options =>
 // Load Admin user config
 builder.Services.Configure<AdminUserOptions>(
     builder.Configuration.GetSection("AdminUser"));
+
+// Needed for HttpContext access
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
