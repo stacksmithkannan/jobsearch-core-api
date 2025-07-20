@@ -1,4 +1,5 @@
 ﻿using JobFinder.API.Application.Commands;
+using JobFinder.API.Application.Queries;
 using JobFinder.API.DTOs;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -37,6 +38,28 @@ namespace JobFinder.API.Controllers
             {
                 _logger.LogWarning("Resume upload failed. Reason: {Reason}", result);
                 return BadRequest(result);
+            }
+        }
+
+        [HttpGet("download/{fileName}")]
+        public async Task<IActionResult> Download(string fileName)
+        {
+            try
+            {
+                var result = await _mediator.Send(new DownloadResumeQuery(fileName));
+                return result;
+            }
+            catch (FileNotFoundException)
+            {
+                return NotFound("Resume not found. ");
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error.");
             }
         }
     }
