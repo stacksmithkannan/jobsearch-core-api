@@ -3,6 +3,7 @@ using JobFinder.API.Application.Handlers;
 using JobFinder.API.Application.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobFinder.API.Controllers
@@ -124,6 +125,21 @@ namespace JobFinder.API.Controllers
             _logger.LogInformation("Job with ID {JobId} successfully deleted.", id);
 
             return NoContent();
+        }
+
+        [HttpPost("{jobId}/apply")]
+        [Authorize(Roles ="User")]
+        public async Task<IActionResult> ApplyToJob(int jobId)
+        {
+            _logger.LogInformation("user is attempting to apply to job ID {JobId}", jobId);
+
+            var result = await _mediator.Send(new ApplyToJobCommand(jobId));
+
+            if(result == "Applied successfully")
+                return Ok(new {message = result});
+
+            _logger.LogWarning("Application failed: {Reason}", result);
+            return BadRequest(result);
         }
     }
 }
