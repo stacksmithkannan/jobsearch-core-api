@@ -141,5 +141,14 @@ namespace JobFinder.API.Controllers
             _logger.LogWarning("Application failed: {Reason}", result);
             return BadRequest(result);
         }
+
+        [HttpGet("{jobId}/applications")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetApplicationsForJob(int jobId)
+        {
+            _logger.LogInformation("Admin requested applications for job ID: {JobId}", jobId);
+            var applications = await _mediator.Send( new GetApplicationsForJobQuery(jobId));
+            return Ok(applications);
+        }
     }
 }
