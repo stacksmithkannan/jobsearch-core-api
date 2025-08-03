@@ -150,5 +150,27 @@ namespace JobFinder.API.Controllers
             var applications = await _mediator.Send( new GetApplicationsForJobQuery(jobId));
             return Ok(applications);
         }
+
+        [HttpGet("my-applications")]
+        [Authorize(Roles ="User")]
+        public async Task<IActionResult> GetMyApplications()
+        {
+            var result = await _mediator.Send(new GetMyApplicationsQuery());
+            return Ok(result);
+        }
+
+        [HttpGet("search")]
+        [AllowAnonymous]
+        public async Task<IActionResult> SearchJobs([FromQuery] string? keyWord, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        {
+            var query = new SearchJobsQuery
+            {
+                KeyWord = keyWord,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
+            var results = await _mediator.Send( query );
+            return Ok(results);
+        }
     }
 }
