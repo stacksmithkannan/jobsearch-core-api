@@ -18,6 +18,10 @@ namespace JobFinder.API.Data
                 v => string.Join(",", v),
                 v => v.Split(",", StringSplitOptions.None).ToList()
                 );
+
+            modelBuilder.Entity<JobApplication>()
+                .Property(a => a.Status)
+                .HasConversion<string>();
         }
 
         public DbSet<User> Users { get; set; }

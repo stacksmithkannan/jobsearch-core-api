@@ -1,4 +1,6 @@
-﻿namespace JobFinder.API.Domain.Entities
+﻿using JobFinder.API.Domain.Enums;
+
+namespace JobFinder.API.Domain.Entities
 {
     public class JobApplication
     {
@@ -10,6 +12,7 @@
 
         public User? User { get; set; }
         public Job? Job { get; set; }
+        public ApplicationStatus Status { get; set; } = ApplicationStatus.Pending;
 
     }
 }
