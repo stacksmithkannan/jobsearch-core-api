@@ -1,34 +1,30 @@
 # 🧠 JobFinder API – .NET Core Backend
 
-A scalable job portal backend built with **.NET Core**, following **Clean Architecture** and **CQRS pattern with MediatR**, integrated with **Elasticsearch** for high-performance job search functionality.
-
+A scalable job portal backend built with **.NET Core**, following **Clean Architecture** and **CQRS pattern with MediatR** for maintainable and testable code.
 ---
 
 ## 🚀 Features
 
 - 🧾 Job CRUD operations
-- 🔍 Full-text search with **Elasticsearch**
 - 👤 User authentication with **JWT**
 - 🧱 Clean folder structure using **CQRS + MediatR**
 - 📦 EF Core with SQL Server (or MongoDB optional)
 - 🔐 Protected APIs
 - 🧪 Swagger UI for testing endpoints
-
 ---
 
 ## 🛠 Tech Stack
 
+
 | Layer        | Technology            |
 |--------------|------------------------|
 | Backend      | .NET 8 Web API         |
-| Search Engine| Elasticsearch          |
 | Auth         | JWT (JSON Web Token)   |
 | Database     | SQL Server (default)   |
 | ORM          | Entity Framework Core  |
 | Messaging    | MediatR                |
 | Docs         | Swagger (OpenAPI)      |
 | Version Ctrl | Git + GitHub           |
-
 ---
 
 ## 🧩 Project Structue
