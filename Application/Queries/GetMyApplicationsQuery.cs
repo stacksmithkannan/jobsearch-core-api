@@ -4,6 +4,10 @@ using System.Collections.Generic;
 
 namespace JobFinder.API.Application.Queries
 {
-    public class GetMyApplicationsQuery : IRequest<List<JobApplicationDto>> { }
-  
+    public class GetMyApplicationsQuery : IRequest<PaginatedUserApplicationDto>
+    {
+        public int PageNumber { get; set; }
+        public int PageSize { get; set; }
+    }
+
 }

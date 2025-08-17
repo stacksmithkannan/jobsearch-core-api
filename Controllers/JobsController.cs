@@ -1,6 +1,7 @@
 ﻿using JobFinder.API.Application.Commands;
 using JobFinder.API.Application.Handlers;
 using JobFinder.API.Application.Queries;
+using JobFinder.API.DTOs;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -153,9 +154,14 @@ namespace JobFinder.API.Controllers
 
         [HttpGet("my-applications")]
         [Authorize(Roles ="User")]
-        public async Task<IActionResult> GetMyApplications()
+        public async Task<IActionResult> GetMyApplications([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
-            var result = await _mediator.Send(new GetMyApplicationsQuery());
+            var result = await _mediator.Send(new GetMyApplicationsQuery
+            {
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            });
+
             return Ok(result);
         }
 
@@ -172,5 +178,26 @@ namespace JobFinder.API.Controllers
             var results = await _mediator.Send( query );
             return Ok(results);
         }
+
+        [HttpPatch("{jobApplicationId}/status")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateApplicationStatus(
+                                            [FromRoute] int jobApplicationId,
+                                            [FromBody] UpdateApplicationStatusDto dto)
+        {
+            var command = new UpdateApplicationStatusCommand
+            {
+                JobApplicationId = jobApplicationId,
+                Status = dto.Status
+            };
+
+            var result = await _mediator.Send(command);
+            if (!result)
+                return NotFound($"Application with ID {jobApplicationId} not found.");
+
+            return Ok($"Status updated to {dto.Status}.");
+        }
+
+
     }
 }

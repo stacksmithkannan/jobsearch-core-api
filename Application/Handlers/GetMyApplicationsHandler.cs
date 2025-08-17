@@ -9,7 +9,7 @@ using System.Security.Claims;
 
 namespace JobFinder.API.Application.Handlers
 {
-    public class GetMyApplicationsHandler : IRequestHandler<GetMyApplicationsQuery,List<JobApplicationDto>>
+    public class GetMyApplicationsHandler : IRequestHandler<GetMyApplicationsQuery, PaginatedUserApplicationDto>
     {
         private readonly ApplicationDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -22,32 +22,74 @@ namespace JobFinder.API.Application.Handlers
             _logger = logger;
         }
 
-        public async Task<List<JobApplicationDto>> Handle(GetMyApplicationsQuery request,CancellationToken cancellationToken)
+        public async Task<PaginatedUserApplicationDto> Handle(GetMyApplicationsQuery request,CancellationToken cancellationToken)
         {
             var email = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.Email);
 
             if (string.IsNullOrEmpty(email))
             {
                 _logger.LogWarning("Unauthorized request to fetch applications.");
-                return new List<JobApplicationDto>();
+                return new PaginatedUserApplicationDto
+                {
+
+                    Applications = Enumerable.Empty<JobApplicationDto>(),
+                    PageNumber = request.PageNumber,
+                    PageSize = request.PageSize,
+                    TotalCount = 0
+                };
+
             }
 
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email,cancellationToken);
+            if (user == null)
+            {
+                _logger.LogWarning("User not found for email: {Email}", email);
+                return new PaginatedUserApplicationDto();
+            }
+
+            var query = _context.JobApplications
+                       .Include(a => a.Job)
+                       .Include(a => a.User)
+                       .Where(a => a.UserId == user.Id)
+                       .AsQueryable();
+
+            int pageNumber = request.PageNumber > 0 ? request.PageNumber : 1;
+            int pageSize = request.PageSize > 0 ? request.PageSize : 10;
+
+            var totalCount = await _context.JobApplications
+                                .Where(a => a.UserId == user.Id)
+                                .CountAsync(cancellationToken);
 
             var applications = await _context.JobApplications
-                               .Include(a => a.Job)
-                               .Where( a => a.UserId == user.Id)
-                               .Select(a => new JobApplicationDto
-                               {
-                                   UserName = a.User.UserName,
-                                   Email = a.User.Email,
-                                   JobId = a.Jobid,
-                                   JobTitle = a.Job.Title,
-                                   AppliedOn = a.AppliedOn,
-                                   Resumepath = a.ResumePath
-                               })
-                               .ToListAsync(cancellationToken);
-            return applications;
+                .Include(a => a.Job)
+                .Include(a => a.User)
+                .Where(a => a.UserId == user.Id)
+                .OrderByDescending(a => a.AppliedOn)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .Select(a => new JobApplicationDto
+                {
+                    UserName = a.User.UserName,
+                    Email = a.User.Email,
+                    JobId = a.Jobid,
+                    JobTitle = a.Job.Title,
+                    Location = a.Job.Location,
+                    PostedOn = a.Job.PostedDate,
+                    Description = a.Job.Description,
+                    Skills = a.Job.Skills,
+                    Status = a.Status.ToString(),
+                    AppliedOn = a.AppliedOn,
+                    Resumepath = a.ResumePath
+                })
+                .ToListAsync(cancellationToken);
+
+            return new PaginatedUserApplicationDto
+            {
+                Applications = applications,
+                TotalCount = totalCount,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
         }
     }
 }
