@@ -12,9 +12,9 @@ namespace JobFinder.API.Controllers
     public class AdminController: ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly ILogger _logger;
+        private readonly ILogger<AdminController> _logger;
 
-        public AdminController(IMediator mediator, ILogger logger)
+        public AdminController(IMediator mediator, ILogger<AdminController> logger)
         {
             _mediator = mediator;
             _logger = logger;
