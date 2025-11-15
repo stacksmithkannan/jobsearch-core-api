@@ -25,7 +25,6 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.Console(
         outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}",
         theme: SystemConsoleTheme.Colored)
-    .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day)
     .CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
@@ -73,16 +72,11 @@ builder.Services.AddSwaggerGen(c =>
 
 // DB Context
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-options.UseSqlServer(
-    builder.Configuration.GetConnectionString("DefaultConnection"),
-    sqlOptions =>
-    {
-        sqlOptions.EnableRetryOnFailure(
-            maxRetryCount: 5,
-            maxRetryDelay: TimeSpan.FromSeconds(10),
-            errorNumbersToAdd: null);
-    }
-));
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    options.UseMySql(
+        connectionString, ServerVersion.AutoDetect(connectionString));
+});
 
 // Register MediatR
 builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
@@ -122,19 +116,28 @@ builder.Services.Configure<AdminUserOptions>(
 // Needed for HttpContext access
 builder.Services.AddHttpContextAccessor();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.AllowAnyOrigin()  // your frontend origins
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
+
+app.UseCors("AllowFrontend");
+
 
 // Migrate DB and Seed AdminFV
 await SeedAdminUser.EnsureAdminCreatedAsync(app.Services);
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
+app.UseSwagger();
+app.UseSwaggerUI();
+//app.UseHttpsRedirection();
 
 app.UseAuthentication();
 
