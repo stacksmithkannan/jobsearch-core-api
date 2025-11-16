@@ -1,1 +1,9 @@
 obj/
+/.vs
+/bin/Debug/net8.0
+/Logs
+/wwwroot/resumes
+/appsettings.Development.json
+/jobfinder.db
+/jobfinder.db-shm
+/jobfinder.db-wal
