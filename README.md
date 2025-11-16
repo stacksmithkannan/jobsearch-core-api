@@ -1,28 +1,33 @@
-# 🧠 JobFinder API – .NET Core Backend
+# JobFinder API – .NET 8 Clean Architecture Backend
 
-A scalable job portal backend built with **.NET Core**, following **Clean Architecture** and **CQRS pattern with MediatR** for maintainable and testable code.
+A scalable job portal backend built with .NET 8, following Clean Architecture, MediatR (CQRS), EF Core, SQLite (local), and MySQL (cloud).
 ---
 
 ## 🚀 Features
 
 - 🧾 Job CRUD operations
 - 👤 User authentication with **JWT**
-- 🧱 Clean folder structure using **CQRS + MediatR**
-- 📦 EF Core with SQL Server (or MongoDB optional)
-- 🔐 Protected APIs
-- 🧪 Swagger UI for testing endpoints
+- 🧱 **CQRS** pattern with **MediatR** (Commands & Queries)
+- 📦 Clean, modular architecture
+- 💾 **SQLite** for local development
+- ☁️ **MySQL** for production (**Railway / Azure**)
+- 🔐 Role Based Authentication (Admin/User)
+- 🧪 Swagger UI with **JWT** support
+- 📂 Resume file upload support
 ---
 
 ## 🛠 Tech Stack
 
 
-| Layer        | Technology            |
+| Layer        | Technology             |
 |--------------|------------------------|
 | Backend      | .NET 8 Web API         |
-| Auth         | JWT (JSON Web Token)   |
-| Database     | SQL Server (default)   |
+| Architecture | Clean + CQRS (MediatR) |
+| Local DB     | SQLite                 |
+| Cloud DB     | MySQL (Railway / Azure)|
 | ORM          | Entity Framework Core  |
-| Messaging    | MediatR                |
+| Auth         | JWT                    |
+| Mapping      | AutoMapper             |
 | Docs         | Swagger (OpenAPI)      |
 | Version Ctrl | Git + GitHub           |
 ---
@@ -30,13 +35,25 @@ A scalable job portal backend built with **.NET Core**, following **Clean Archit
 ## 🧩 Project Structue
 
 JobFinder.API/
-├── Application/ # CQRS Handlers, Commands, Queries
-├── Domain/ # Entity models
-├── Data/ # ApplicationDbContext (EF Core)
-├── Controllers/ # API endpoints
-├── Infrastructure/ # Auth, Elasticsearch setup
-├── Program.cs # Startup and service configuration
-└── appsettings.json # Configuration
+├── Application/        # CQRS: Commands, Queries, Handlers
+├── Domain/             # Entities
+├── Data/               # EF Core DB Context
+├── StartUp/            # Seed admin user
+├── Controllers/        # API Endpoints
+├── Migrations/         # MySQL migrations (Cloud)
+├── MigrationsSQLite/   # SQLite migrations (Local)
+├── Program.cs          # App setup
+├── appsettings.json    # Production config (NO secrets)
+└── wwwroot/resumes     # Uploaded files
+
+## ⚙️ Environment Setup
+
+## The API switches automatically:
+
+  | Environment | 	Database | 	Config File                      |
+  |-------------|---------- |-----------------------------------|
+  | Development	| SQLite	   | appsettings.Development.json      |
+  | Production  | MySQL     |	 appsettings.json + Azure Settings|
 
 ## 🔧 Setup Instructions
 
@@ -46,18 +63,33 @@ JobFinder.API/
  
  cd jobfinder-api
 
-### **2. Configure Database Connection**
+### **2. Create Local Config (Important!)
 
-Edit appsettings.json:
+Create this file manually:
 
-"ConnectionStrings": {
- "DefaultConnection": "Server=localhost\\SQLEXPRESS;Database=JobFinderDB;Trusted_Connection=True;"
+appsettings.Development.json
+
+{
+  "ConnectionStrings": {
+    "SqliteConnection": "Data Source=jobfinder.db"
+  },
+  "Jwt": {
+    "Key": "THIS_IS_A_FAKE_32_CHAR_KEY_1234567890!!",
+    "Issuer": "JobFinder",
+    "Audience": "JobFinderUsers",
+    "DurationInMinutes": 60
+  },
+  "AdminUser": {
+    "UserName": "admin",
+    "Email": "admin@jobfinder.com",
+    "Password": "Admin@123"
+  }
 }
-### **3. Apply Migrations**
-
-dotnet ef migrations add InitialCreate
+### **3. . Apply SQLite Migrations (Local Only)**
 
 dotnet ef database update
+
+This creates:  jobfinder.db
 
 ### **4. Run the API**
 
@@ -98,6 +130,26 @@ Open Swagger UI
 Try endpoints like POST /api/jobs, GET /api/jobs, etc.
 
 Add JWT token in Swagger Authorize section for protected routes
+
+### ☁️ Deployment (MySQL + Azure)
+
+Production uses MySQL connection string:
+
+"ConnectionStrings": {
+  "DefaultConnection": "YOUR MYSQL URL"
+}
+
+Inside Azure App Settings, you will add:
+
+ConnectionStrings:DefaultConnection
+
+Jwt:Key
+
+Jwt:Issuer
+
+Jwt:Audience
+
+AdminUser:Password
 
 ### 🔮 Future Enhancements
 
