@@ -423,3 +423,24 @@ appsettings.Development.json
 
 # SQLite local database files
 *.db
+
+# Ignore Visual Studio folder
+.vs/
+
+# Ignore build folders
+bin/
+obj/
+
+# Ignore SQLite files
+*.db
+*.db-shm
+*.db-wal
+
+# Ignore resume uploads
+wwwroot/resumes/*
+
+# Ignore project cache files
+slnx.sqlite
+*.v9.bin
+*.vsidx
+
