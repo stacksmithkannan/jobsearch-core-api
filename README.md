@@ -1,6 +1,8 @@
 # JobFinder API – .NET 8 Clean Architecture Backend
+<p align="center"> <img src="https://img.shields.io/badge/.NET-8.0-5C2D91?style=for-the-badge&logo=dotnet" /> <img src="https://img.shields.io/badge/CQRS-MediatR-1f72ff?style=for-the-badge&logo=csharp" /> <img src="https://img.shields.io/badge/Database-SQLite | MySQL-brightgreen?style=for-the-badge&logo=database" /> <img src="https://img.shields.io/badge/Auth-JWT-orange?style=for-the-badge&logo=jsonwebtokens" /> <img src="https://img.shields.io/badge/Architecture-Clean_Architecture-blueviolet?style=for-the-badge" /> <img src="https://img.shields.io/badge/Logging-Serilog-0084ff?style=for-the-badge&logo=serilog" /> </p>
 
-A scalable job portal backend built with .NET 8, following Clean Architecture, MediatR (CQRS), EF Core, SQLite (local), and MySQL (cloud).
+JobFinder API is a scalable backend developed using .NET 8, built with Clean Architecture, MediatR (CQRS), EF Core, and secure JWT Authentication.
+It supports SQLite for local development and MySQL in production (Azure / Railway).
 ---
 
 ## 🚀 Features
