@@ -14,7 +14,6 @@ using System.Text;
 using JobFinder.API.Domain.Entities;
 using BCrypt.Net;
 using JobFinder.API.StartUp;
-using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
 
@@ -32,7 +31,6 @@ Log.Information("Starting up the JobFinder API...");
 
 // Force-load environment-specific JSON BEFORE anything else
 builder.Configuration
-    .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
     .AddEnvironmentVariables();
@@ -67,7 +65,7 @@ builder.Services.AddSwaggerGen(c =>
                 Id = "Bearer"
             }
         },
-        new string[] {}
+         Array.Empty<string>()
      }});
 
     // Enable file upload support
