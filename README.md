@@ -153,15 +153,15 @@ AdminUser:Password
 
 ### 🔮 Future Enhancements
 
-✅ Resume upload (file storage)
+⏳ Email notifications
 
-✅ Admin dashboard
+⏳ Recruiter dashboard
 
-⏳ Email service integration
+⏳ Job recommendations
 
-⏳ Notifications module
+⏳ Background worker service
 
-⏳ Role-based access (Admin/Recruiter/JobSeeker)
+⏳ Cloud file storage (Azure Blob
 
 ### 🤝 Contributing
 
