@@ -30,9 +30,13 @@ Log.Logger = new LoggerConfiguration()
 var builder = WebApplication.CreateBuilder(args);
 Log.Information("Starting up the JobFinder API...");
 
-//Load JWT config
-var jwtConfig = builder.Configuration.GetSection("Jwt");
-var Key = jwtConfig["Key"];
+// Force-load environment-specific JSON BEFORE anything else
+builder.Configuration
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+    .AddEnvironmentVariables();
+
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -69,20 +73,31 @@ builder.Services.AddSwaggerGen(c =>
     // Enable file upload support
     c.OperationFilter<FileUploadOperationFilter>();
 });
-
-// DB Context
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
+var environment = builder.Environment;
+if (environment.IsDevelopment())
 {
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-    options.UseMySql(
-        connectionString, ServerVersion.AutoDetect(connectionString));
-});
+    // Local SQLite
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseSqlite(builder.Configuration.GetConnectionString("SqliteConnection")));
+}
+else
+{
+    // Cloud MySQL
+    var cs = builder.Configuration.GetConnectionString("DefaultConnection");
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseMySql(cs, ServerVersion.AutoDetect(cs)));
+}
 
 // Register MediatR
 builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
 
 // Register AutoMapper (optional for DTO mapping)
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+//Load JWT config
+var jwtConfig = builder.Configuration.GetSection("Jwt");
+var Key = jwtConfig["Key"];
+
 
 if (string.IsNullOrEmpty(Key) || Key.Length < 32)
     throw new InvalidOperationException("JWT Key is missing or too short. It must be at least 256 bits (32 characters) long.");

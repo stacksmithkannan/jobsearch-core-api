@@ -417,3 +417,9 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# Local development settings
+appsettings.Development.json
+
+# SQLite local database files
+*.db
