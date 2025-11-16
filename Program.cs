@@ -14,7 +14,6 @@ using System.Text;
 using JobFinder.API.Domain.Entities;
 using BCrypt.Net;
 using JobFinder.API.StartUp;
-using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
 
