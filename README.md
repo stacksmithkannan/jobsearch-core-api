@@ -65,7 +65,7 @@ JobFinder.API/
  
  cd jobfinder-api
 
-### **2. Create Local Config (Important!)
+### 2. Create Local Config (Important!)
 
 Create this file manually:
 
