@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JobFinder.API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251115170505_InitialMySqlMigration")]
-    partial class InitialMySqlMigration
+    [Migration("20251117090505_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
