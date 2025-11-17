@@ -13,17 +13,27 @@ namespace JobFinder.API.Controllers
     {
         private readonly IMediator _mediator;
         private readonly ILogger<AuthController> _logger;
+        private readonly IConfiguration _configuration;
 
-        public AuthController(IMediator mediator, ILogger<AuthController> logger)
+        public AuthController(IMediator mediator, ILogger<AuthController> logger,IConfiguration configuration)
         {
             _mediator = mediator;
             _logger = logger;
+            _configuration = configuration;
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
             _logger.LogInformation("Registration request received for: {Email}", request.Email);
+            var requiredKey = _configuration["RegistrationSecretKey"];
+            var providedKey = Request.Headers["X-REG-KEY"].ToString();
+
+            if (string.IsNullOrEmpty(requiredKey) || providedKey != requiredKey)
+            {
+                _logger.LogWarning("Unauthorized registration attempt for: {Email}", request.Email);
+                return Unauthorized("Registration is protected.Missing or invalid registration key");
+            }
 
             try
             {

@@ -16,6 +16,7 @@ using BCrypt.Net;
 using JobFinder.API.StartUp;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
+using JobFinder.API.Filters;
 
 //Logging
 
@@ -70,6 +71,7 @@ builder.Services.AddSwaggerGen(c =>
 
     // Enable file upload support
     c.OperationFilter<FileUploadOperationFilter>();
+    c.OperationFilter<AddRegistrationHeaderOperationFilter>();
 });
 var environment = builder.Environment;
 if (environment.IsDevelopment())
