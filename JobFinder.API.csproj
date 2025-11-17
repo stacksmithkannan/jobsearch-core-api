@@ -36,7 +36,6 @@
   <ItemGroup>
     <Folder Include="Infrastructure\" />
     <Folder Include="Mappings\" />
-    <Folder Include="MigrationsSQLite\" />
   </ItemGroup>
 
 </Project>
