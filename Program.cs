@@ -144,7 +144,13 @@ var app = builder.Build();
 app.UseCors("AllowFrontend");
 
 
-// Migrate DB and Seed AdminFV
+// --- FIX: Run migrations BEFORE seeding ---
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    db.Database.Migrate();   // Safe on every Azure restart
+}
+// Seed Admin User
 await SeedAdminUser.EnsureAdminCreatedAsync(app.Services);
 
 // Configure the HTTP request pipeline.
